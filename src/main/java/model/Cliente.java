@@ -6,13 +6,15 @@ public class Cliente {
     private String cpfCnpj;
     private String razaoSocial;
     public Endereco enderecoCliente;
+    private int endereco_id;
     private boolean isFisico;
 
-    public Cliente(int idCliente ,String nome, String cpfCnpj, String razaoSocial, Endereco enderecoCliente) {
+    public Cliente(int idCliente ,String nome, String cpfCnpj, String razaoSocial, int endereco_id, Endereco enderecoCliente) {
 		this.idCliente = idCliente;
     	this.nome = nome;
 		this.cpfCnpj = cpfCnpj;
 		this.razaoSocial = razaoSocial;
+		this.endereco_id = endereco_id;
 		this.enderecoCliente = enderecoCliente;
 	}
 
@@ -66,7 +68,15 @@ public class Cliente {
         isFisico = fisico;
     }
 
-    //Validação de CPF e CNPJ
+    public int getEndereco_id() {
+		return endereco_id;
+	}
+
+	public void setEndereco_id(int endereco_id) {
+		this.endereco_id = endereco_id;
+	}
+
+	//Validação de CPF e CNPJ
     public void tipoCliente(){
         if (getCpfCnpj().length() == 11) {
             isFisico = true;

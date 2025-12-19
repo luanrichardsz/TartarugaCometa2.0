@@ -95,7 +95,7 @@ public class EnderecoServlet extends HttpServlet {
 		
 		session.removeAttribute("clienteTemp");
 		
-		response.sendRedirect("endereco?acao=listar");
+		response.sendRedirect("cliente?acao=listar");
 	}
 	
 	protected void editarEndereco(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

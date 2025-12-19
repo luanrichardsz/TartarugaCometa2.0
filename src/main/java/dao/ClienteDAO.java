@@ -49,7 +49,7 @@ public class ClienteDAO {
     }
 
     public ArrayList<Cliente> listar(){
-        String sql = "SELECT idCliente ,nome, cpf_Cnpj, razaoSocial from Cliente";
+        String sql = "SELECT idCliente ,nome, cpf_Cnpj, razaoSocial, endereco_id from Cliente ORDER BY idCliente ASC";
 
         ArrayList<Cliente> clientes = new ArrayList<>();
 
@@ -62,8 +62,9 @@ public class ClienteDAO {
                 String nome = rs.getString("nome");
                 String cpfCnpj = rs.getString("cpf_Cnpj");
                 String razaoSocial = rs.getString("razaoSocial");
+                int endereco_id = rs.getInt("endereco_id");
 
-                clientes.add(new Cliente(idCliente ,nome, cpfCnpj, razaoSocial, endereco));
+                clientes.add(new Cliente(idCliente ,nome, cpfCnpj, razaoSocial, endereco_id, endereco));
             }
         } catch (Exception e){
             throw new RuntimeException(e);

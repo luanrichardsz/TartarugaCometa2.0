@@ -36,6 +36,9 @@ public class ProdutoServlet extends HttpServlet {
 		case "editarProduto":
 			editarProduto(request, response);
 			break;
+		case "deletarProduto":
+			deletarProduto(request, response);
+			break;
 		default:
 			System.out.println("Opção Invalida");
 			break;
@@ -107,6 +110,19 @@ public class ProdutoServlet extends HttpServlet {
 		ProdutoDAO produtoDAO = new ProdutoDAO();
 		
 		produtoDAO.atualizar(novoNome, novoPeso, novoVolume, novoValor, idProduto);
+		
+		response.sendRedirect("produto?acao=listar");
+	}
+	
+	protected void deletarProduto(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("Deletando Produto");
+		
+		String paramId = request.getParameter("idProduto");
+		Integer idProduto = Integer.parseInt(paramId);
+		
+		ProdutoDAO produtoDAO = new ProdutoDAO();
+		
+		produtoDAO.apagar(idProduto);
 		
 		response.sendRedirect("produto?acao=listar");
 	}

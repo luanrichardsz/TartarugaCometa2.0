@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+pageEncoding="UTF-8"%>
    
 <!DOCTYPE html>
 <html>
@@ -13,13 +13,13 @@
 	
 	<form action="/TartarugaCometa/endereco?acao=salvarCadastro" method="post">
 		
-		CEP: <input type="text" name="cep" required/> <br>
-		Rua: <input type="text" name="rua" required/> <br>
-		Número: <input type="text" name="numero"/> <br>
-		Bairro: <input type="text" name="bairro" required/> <br>
-		Cidade: <input type="text" name="cidade" required /> <br>
-		Estado: <input type="text" name="estado" required /> <br>
-		Complemento: <input type="text" name="complemento" required /> <br>
+		CEP: <input type="text" name="cep" pattern="\d{8}" maxlength="8" required/> <br>
+		Rua: <input type="text" name="rua" pattern="^[A-Za-zÀ-ÿ\s]+$" title="Somente letras" required/> <br>
+		Número: <input type="text" name="numero" pattern="\d{1,5}"/> <br>
+		Bairro: <input type="text" name="bairro" pattern="^[A-Za-zÀ-ÿ\s]+$" title="Somente letras" required /> <br>
+		Cidade: <input type="text" name="cidade" pattern="^[A-Za-zÀ-ÿ\s]+$" title="Somente letras" required /> <br>
+		Estado: <input type="text" name="estado" pattern="^[A-Za-zÀ-ÿ\s]+$" title="Somente letras" required /> <br>
+		Complemento: <input type="text" name="complemento" pattern="^[A-Za-zÀ-ÿ\s]+$" title="Somente letras" /> <br>
 		
 		<input type="submit">
 		

@@ -14,17 +14,16 @@ public class EntregaDAO {
         this.connection = new ConnectionFactory();
     }
 
-    public void cadastrar(Entrega entrega, ArrayList<ProdutoEntrega> mercadorias) throws ClassNotFoundException {
-        String sql = "INSERT INTO Entrega (realizada, clienteRemetente_ID, clienteDestinatario_ID) VALUES (?, ?, ?)";
+    public void cadastrar(Entrega entrega, ArrayList<ProdutoEntrega> mercadorias){
+        String sql = "INSERT INTO Entrega ( clienteRemetente_ID, clienteDestinatario_ID) VALUES (?, ?)";
 
         try (Connection conn = connection.getConnection()){
             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-            ps.setBoolean(1, entrega.isRealizada());
-            ps.setInt(2, entrega.getClienteDestinatario().getIdCliente());
-            ps.setInt(3, entrega.getClienteRemetente().getIdCliente());
+            ps.setInt(1, entrega.getClienteDestinatario().getIdCliente());
+            ps.setInt(2, entrega.getClienteRemetente().getIdCliente());
 
-            System.out.println("Dados dos Clientes e Dados da Entrega Cadastrado");
+            System.out.println("Dados dos Clientes Cadastrado");
 
             ps.executeUpdate();
 
@@ -39,7 +38,7 @@ public class EntregaDAO {
             }
 
             //Preparar o insert da table produto_entrega
-            String sqlProdutoEntrega = "INSERT INTO Produto_Entrega (entrega_ID, produto_ID, quantidade) VALUES (?, ?, ?)";
+            String sqlProdutoEntrega = "INSERT INTO Produto_Entrega (entrega_ID, produto_ID, quantidade, frete) VALUES (?, ?, ?, ?)";
             PreparedStatement psProdutoEntrega = conn.prepareStatement(sqlProdutoEntrega);
 
             //Laço de repetição para adicionar Produtos da lista
@@ -47,6 +46,7 @@ public class EntregaDAO {
                 psProdutoEntrega.setInt(1, idEntrega);
                 psProdutoEntrega.setInt(2, p.getProduto().getIdProduto());
                 psProdutoEntrega.setInt(3, p.getQuantidade());
+                psProdutoEntrega.setDouble(4, p.getFrete());
 
                 psProdutoEntrega.executeUpdate();
             }
@@ -58,8 +58,8 @@ public class EntregaDAO {
         }
     }
 
-    public ArrayList<Entrega> listar() throws ClassNotFoundException{
-        String sqlEntrega = "SELECT * FROM Entrega";
+    public ArrayList<Entrega> listar(){
+        String sqlEntrega = "SELECT * FROM Entrega ORDER BY idEntrega ASC";
 
         ArrayList<Entrega> entregas = new ArrayList<>();
 
@@ -76,25 +76,18 @@ public class EntregaDAO {
                 int remetente_id = rs.getInt("clienteremetente_id");
                 int destinatario_id = rs.getInt("clientedestinatario_id");
 
-                //Validação para os IDs
-                if(idEntrega != ultimoIdEntrega){
-                    Cliente remetente = new Cliente();
-                    Cliente destinatario = new Cliente();
+             // Validação para os IDs
+                if (idEntrega != ultimoIdEntrega){
 
-                    //Settando os IDs dos Clientes
-                    remetente.setIdCliente(remetente_id);
-                    destinatario.setIdCliente(destinatario_id);
+                    ClienteDAO clienteDAO = new ClienteDAO();
 
-                    //Adicionando a nova Entrega na lista Entrega
+                    Cliente remetente = clienteDAO.buscarPorId(remetente_id);
+                    Cliente destinatario = clienteDAO.buscarPorId(destinatario_id);
+
                     entregaAtual = new Entrega(realizada, remetente, destinatario);
-
-                    //Settando o ID da Entrega
                     entregaAtual.setIdEntrega(idEntrega);
 
-                    //Adicionando na lista
                     entregas.add(entregaAtual);
-
-                    //Mudando o valor da variavel ultimoIdEntrega
                     ultimoIdEntrega = idEntrega;
                 }
 
@@ -104,22 +97,25 @@ public class EntregaDAO {
                 psProEnt.setInt(1, idEntrega);
                 ResultSet rsProEnt = psProEnt.executeQuery();
 
-                while(rsProEnt.next()){
+                while (rsProEnt.next()) {
                     int idProduto = rsProEnt.getInt("produto_ID");
                     String nomeProduto = rsProEnt.getString("nome");
                     int quantidade = rsProEnt.getInt("quantidade");
+                    double frete = rsProEnt.getDouble("frete");
+                    double valor = rsProEnt.getDouble("valor");
 
-                    if (idProduto != 0){
+                    if (idProduto != 0) {
                         ProdutoEntrega proEnt = new ProdutoEntrega();
                         Produto p = new Produto();
 
-                        //Settando o ID Produto e os atributos da classe Produto_Entrega
-                        p.setNome(nomeProduto);
                         p.setIdProduto(idProduto);
+                        p.setNome(nomeProduto);
+                        p.setValor(valor);
+
                         proEnt.setProduto(p);
                         proEnt.setQuantidade(quantidade);
+                        proEnt.setFrete(frete);
 
-                        //Adicionando Produto na Entrega
                         entregaAtual.getProdutos().add(proEnt);
                     }
                 }
@@ -128,11 +124,11 @@ public class EntregaDAO {
             throw new RuntimeException(e);
         }
 
-        System.out.println(entregas);
+//        System.out.println(entregas);
         return entregas;
     }
 
-    public void atualizar (boolean realizada, int idEntrega) throws ClassNotFoundException{
+    public void atualizar (boolean realizada, int idEntrega){
         String sql = "UPDATE entrega SET realizada = ? WHERE identrega = ?";
 
         try(Connection cnn = connection.getConnection()) {

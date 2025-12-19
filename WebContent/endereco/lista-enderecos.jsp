@@ -24,7 +24,7 @@
 				Estado: ${endereco.estado} <br>
 				Complemento: ${endereco.complemento} <br>
 				<a href="/TartarugaCometa/endereco?acao=buscarEndereco&idEndereco=${endereco.idEndereco}"> Editar </a> - 
-				<a onclick="excluir()" href="/TartarugaCometa/endereco?acao=deletarEndereco&idEndereco=${endereco.idEndereco}"> Excluir </a>
+				<a onclick="return excluir()" href="/TartarugaCometa/endereco?acao=deletarEndereco&idEndereco=${endereco.idEndereco}"> Excluir </a>
 				
 			</li> <br>
 		</c:forEach>
@@ -33,8 +33,15 @@
 	<a href="adm.jsp"> Tela Principal </a> - <a href="endereco?acao=cadastrar"> Adicionar novo endereço </a>
 
 	<script type="text/javascript">
-		function excluir(){
-			alert("Endereço excluido com sucesso!");
+		function excluir{
+			var confirmacao = confirm("Tem certeza de que deseja excluir este endereço?");
+			
+			if(confirmacao){
+				alert("Endereço excluido com sucesso!")
+				return true;
+			} else {
+				return false;
+			}
 		}
 	</script>
 </body>

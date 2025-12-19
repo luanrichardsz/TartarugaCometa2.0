@@ -24,7 +24,7 @@
 			Valor: ${produto.valor} <br>
 			
 			<a href="/TartarugaCometa/produto?acao=buscarProduto&idProduto=${produto.idProduto}"> Editar </a> -
-			<a onclick="excluir()" href="/TartarugaCometa/produto?acao=deletarProduto&idProduto=${produto.idProduto}"> Excluir </a>
+			<a onclick="return excluir()" href="/TartarugaCometa/produto?acao=deletarProduto&idProduto=${produto.idProduto}"> Excluir </a>
 		</li> <br>
 		</c:forEach>
 	</ul>
@@ -32,7 +32,18 @@
 	<a href="adm.jsp"> Tela Principal </a> - <a href="produto?acao=cadastrar"> Adicionar novo produto </a>
 	
 	
-	
+	<script type="text/javascript">
+		function excluir(){
+			var confirmacao = confirm("Tem certeza de que deseja excluir este produto?");
+			
+			if(confirmacao){
+				alert("Produto excluido com sucesso!")
+				return true;
+			} else {
+				return false;
+			}
+		}
+	</script>
 	
 	
 </body>

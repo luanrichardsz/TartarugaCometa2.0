@@ -3,27 +3,38 @@ package model;
 public class ProdutoEntrega {
     public Produto produto;
     private int quantidade;
+    private double frete;
+    
+	public ProdutoEntrega(Produto produto, int quantidade, double frete) {
+		super();
+		this.produto = produto;
+		this.quantidade = quantidade;
+		this.frete = frete;
+	}
+	
+	public ProdutoEntrega() {}
 
-    public ProdutoEntrega(Produto produto, int quantidade) {
-        this.produto = produto;
-        this.quantidade = quantidade;
-    }
+	public Produto getProduto() {
+		return produto;
+	}
 
-    public ProdutoEntrega() {};
+	public void setProduto(Produto produto) {
+		this.produto = produto;
+	}
 
-    public Produto getProduto() {
-        return produto;
-    }
+	public int getQuantidade() {
+		return quantidade;
+	}
 
-    public void setProduto(Produto produto) {
-        this.produto = produto;
-    }
+	public void setQuantidade(int quantidade) {
+		this.quantidade = quantidade;
+	}
 
-    public int getQuantidade() {
-        return quantidade;
-    }
+	public double getFrete() {
+		return frete;
+	}
 
-    public void setQuantidade(int quantidade) {
-        this.quantidade = quantidade;
-    }
+	public void setFrete(double frete) {
+		this.frete = frete;
+	}    
 }

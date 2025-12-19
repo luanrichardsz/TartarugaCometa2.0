@@ -1,13 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<!DOCTYPE html>
+<!DOCTYPE html5>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Cadastrar Cliente</title>
 </head>
 <body>
-	<h1 style="text-align: center"> Cadastro para Clientes </h1>
+	<h1 style="text-align: center"> Cadastrar Clientes </h1>
 	
 	<label>Escolha o tipo da conta:</label>
 	
@@ -21,16 +21,16 @@
 	
 	<form id="formFisica" action="/TartarugaCometa/cliente?acao=salvarTemp" method="post" hidden>
 		
-		Nome: <input type="text" name="nomeCliente" required> <br>
-		CPF: <input type="text" name="cpfCnpj" required> <br>
+		Nome: <input type="text" name="nomeCliente" pattern="^[A-Za-zÀ-ÿ\s]+$" maxlength="50" title="Somente letras" required style="width: 25ch"> <br>
+		CPF: <input type="text" name="cpfCnpj" pattern="\d{11}" title="O CPF deve conter 11 digitos e somente números" maxlength="11" required > <br>
 		<button type="submit"> Salvar </button>
 		
 	</form>
 	
 	<form id="formJuridica" action="/TartarugaCometa/cliente?acao=salvarTemp" method="post" hidden>
-		Nome: <input type="text" name="nomeCliente" required> <br>
-		CNPJ: <input type="text" name="cpfCnpj" required> <br>
-		Razão Social: <input type="text" name="razaoSocial" required> <br>
+		Nome: <input type="text" name="nomeCliente"  maxlength="50" pattern="^[A-Za-zÀ-ÿ\s]+$" title="Somente letras" style="width: 25ch" required> <br>
+		CNPJ: <input type="text" name="cpfCnpj" pattern="\d{14}" maxlength="14" title="O CNPJ deve conter 14 digitos e somente números" required > <br>
+		Razão Social: <input type="text" name="razaoSocial" required style="width: 30ch"> <br>
 		<button type="submit"> Salvar </button>
 	</form> <br>
 	
