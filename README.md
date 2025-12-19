@@ -83,6 +83,12 @@ CREATE DATABASE tartaruga_cometa;
     /home/estagiario3/eclipse-workspace/TartarugaCometa/bd/createTable.sql
 5. Crie as tabelas
 
+- Cliente
+- Endereco
+- Produto
+- Entrega
+- Produto_Entrega
+
 ## 🔧 Configuração do Projeto
 
 ### 📌 Conexão com o Banco de Dados
