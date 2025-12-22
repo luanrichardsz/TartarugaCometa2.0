@@ -79,8 +79,15 @@ Projeto desenvolvido **sem frameworks**, priorizando o entendimento da base do *
 CREATE DATABASE tartaruga_cometa;
 ```
 2. Conecte-se ao banco
-3. Copie os comandos do squema.sql
-4. Crie as tabelas
+3. Copie os comandos do arquivo createTable.sql
+    /home/estagiario3/eclipse-workspace/TartarugaCometa/bd/createTable.sql
+5. Crie as tabelas
+
+- Cliente
+- Endereco
+- Produto
+- Entrega
+- Produto_Entrega
 
 ## 🔧 Configuração do Projeto
 
