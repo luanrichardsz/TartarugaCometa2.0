@@ -46,7 +46,7 @@ public class ProdutoDAO {
     }
 
     public ArrayList<Produto> listar(){
-        String sql = "SELECT * FROM Produto";
+        String sql = "SELECT * FROM Produto ORDER BY idProduto ASC	";
 
         ArrayList<Produto> produtos = new ArrayList<>();
 

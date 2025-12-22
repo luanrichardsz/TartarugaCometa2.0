@@ -106,6 +106,8 @@ td {
                 </td>
 
                 <td>
+                	<strong> Calculo do Frete = 10% do Valor da Compra </strong>
+                	
                     <c:forEach items="${entrega.produtos}" var="produtoEntrega">
                         <div>
                             <fmt:formatNumber value="${produtoEntrega.frete}"
@@ -141,7 +143,7 @@ td {
 					    </a>
 					</c:if>
                     
-                    <a onclick="return excluir(${entrega.realizada})"
+                    <a onclick="return excluir('${entrega.realizada}')"
                        href="/TartarugaCometa/entrega?acao=deletar&idEntrega=${entrega.idEntrega}&realizada=${entrega.realizada}">
                         Excluir
                     </a>
@@ -158,12 +160,12 @@ td {
 
 	<script>
 	    function excluir(foiRealizada) {
-	        if (!foiRealizada) {
-	            alert("A entrega não pode ser excluída porque ainda não foi realizada!");
-	            return false;
-	        }
-	        
-	        return confirm("Tem certeza de que deseja excluir esta entrega?");
+	    		
+	        if (foiRealizada == true || foiRealizada == "true") {
+		        alert("A entrega não pode ser excluída porque ainda não foi realizada!")
+		        return false;
+	        } 
+	        return confirm("Tem certeza de que deseja excluir esta entrega?");	
 	    }	
 	</script>
 

@@ -59,7 +59,7 @@ public class EntregaDAO {
     }
 
     public ArrayList<Entrega> listar(){
-        String sqlEntrega = "SELECT * FROM Entrega ORDER BY idEntrega ASC";
+        String sqlEntrega = "SELECT * FROM Entrega ORDER BY realizada ASC";
 
         ArrayList<Entrega> entregas = new ArrayList<>();
 

@@ -134,7 +134,7 @@ public class EntregaServlet extends HttpServlet {
 		
 		EntregaDAO entregaDAO = new EntregaDAO();
 		
-		if( realizada == true ) {
+		if( realizada == false ) {
 			entregaDAO.apagar(idEntrega);
 		}
 				

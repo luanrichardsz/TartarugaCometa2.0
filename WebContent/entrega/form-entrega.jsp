@@ -89,20 +89,26 @@
 				    </select>
 				</td>
 				
-				<td>
-					<select name="produto" id="produto" onchange="calcularFrete()" required>
-					    <option value=""> Selecione o produto </option>
-					    <c:forEach items="${produtos}" var="produto">
-					        <option value="${produto.idProduto}" data-valor="${produto.valor}">
-					            ${produto.nome}
-					        </option>
-					    </c:forEach>
-					</select>
-				</td>
+			<td>
+			    <select name="produto" id="produto" onchange="atualizarInfoProduto()" required>
+			        <option value=""> Selecione o produto </option>
+			        <c:forEach items="${produtos}" var="produto">
+			            <option value="${produto.idProduto}" 
+			                    data-valor="${produto.valor}" 
+			                    data-peso="${produto.peso}">
+			                ${produto.nome}
+			            </option>
+			        </c:forEach>
+			    </select>
+			    
+			    <div id="dados-selecionados" style="margin-top: 10px; font-size: 12px; color: #555;">
+			        Peso: <span id="display-peso">0</span> kg | 
+			        Valor Unitário: R$ <span id="display-valor">0.00</span>
+			    </div>
+			</td>
 				
 				<td>
 					<input type="number" name="quantidade" id="quantidade" min="1" value="1" onchange="calcularFrete()">
-
 				</td>
 				
 				<td>
@@ -151,6 +157,24 @@
 
 	    document.getElementById("frete").value = frete.toFixed(2);
 	}
+
+	function atualizarInfoProduto() {
+	    const select = document.getElementById('produto');
+	    
+	    const opcaoSelecionada = select.options[select.selectedIndex];
+	    
+	    const valor = opcaoSelecionada.getAttribute('data-valor');
+	    const peso = opcaoSelecionada.getAttribute('data-peso');
+	    
+	    if (valor && peso) {
+	        document.getElementById('display-peso').innerText = peso;
+	        document.getElementById('display-valor').innerText = valor;
+	    } else {
+	        document.getElementById('display-peso').innerText = "0";
+	        document.getElementById('display-valor').innerText = "0.00";
+	    }
+	}
+	
 	
 	function apagarRemetente() {
 	    const remetenteSelect = document.getElementById("remetente");
