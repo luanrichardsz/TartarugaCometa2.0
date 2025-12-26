@@ -70,7 +70,7 @@
 		</tr>
 		<tr>
 			<td> <a href="/TartarugaCometa/cliente?acao=cadastrar"> Cadastrar </a> </td>
-			<td> <a href="/TartarugaCometa/endereco?acao=cadastrar"> Cadastrar </a> </td>
+			<td> <a href="/TartarugaCometa/endereco?acao=cadastrar">  </a> </td>
 			<td> <a href="/TartarugaCometa/produto?acao=cadastrar"> Cadastrar </a> </td>
 			<td> <a href="/TartarugaCometa/entrega?acao=cadastrar"> Cadastrar </a> </td>
 			

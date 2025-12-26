@@ -13,36 +13,36 @@
 <title>Entregas</title>
 
 <style>
-table{
-    width: 99%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    border-radius: 12px;
-}
-
-th {
-    color: black;
-    padding: 12px;
-    border: 1px solid #34495e;
-    border-radius:14px;
-    text-align: center;
-}
-
-td {	
-    padding: 10px;
-    border: 1px solid #ddd;
-    vertical-align: middle;
-    text-align: center;
-    border-radius: 14px;	
-}
+	table{
+	    width: 99%;
+	    border-collapse: collapse;
+	    margin: 20px 0;
+	    font-family: Arial, sans-serif;
+	    font-size: 14px;
+	    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+	    border-radius: 12px;
+	}
+	
+	th {
+	    color: black;
+	    padding: 12px;
+	    border: 1px solid #34495e;
+	    border-radius:14px;
+	    text-align: center;
+	}
+	
+	td {	
+	    padding: 10px;
+	    border: 1px solid #ddd;
+	    vertical-align: middle;
+	    text-align: center;
+	    border-radius: 14px;	
+	}
 </style>
 </head>
 <body>
 
-<h1> Entregas Cadastradas </h1>
+<h1 style="text-align: center"> Entregas Cadastradas </h1>
 
 <table>
     <thead>
@@ -96,10 +96,14 @@ td {
                         <div style="margin-bottom: 6px;">
                             <strong>${produtoEntrega.produto.nome}</strong><br>
                             Quantidade: ${produtoEntrega.quantidade}<br>
+						<c:if test="${not empty produtoEntrega.produto.descricao}">
+                            Descrição: ${produtoEntrega.produto.descricao} <br>
+                        </c:if>
                             Subtotal:
                             <fmt:formatNumber value="${subtotalProduto}"
                                               type="currency"
-                                              currencySymbol="R$" />
+                                              currencySymbol="R$" /> <br>
+                           
                         </div>
 
                     </c:forEach>
@@ -138,15 +142,17 @@ td {
 
                 <td>
                     <c:if test="${entrega.realizada == false}">
-					    <a id="concluir" href="/TartarugaCometa/entrega?acao=editarStatus&idEntrega=${entrega.idEntrega}&realizada=true">
-					        Concluir |
+					    <a onclick="return concluir(${entrega.realizada})" id="concluir" href="/TartarugaCometa/entrega?acao=editarStatus&idEntrega=${entrega.idEntrega}&realizada=true">
+					        Concluir
 					    </a>
+					    	|
+					    <a onclick="return excluir(${entrega.realizada})"
+	                      href="/TartarugaCometa/entrega?acao=deletar&idEntrega=${entrega.idEntrega}&realizada=${entrega.realizada}">
+	                       Excluir
+	                    </a>
 					</c:if>
                     
-                    <a onclick="return excluir('${entrega.realizada}')"
-                       href="/TartarugaCometa/entrega?acao=deletar&idEntrega=${entrega.idEntrega}&realizada=${entrega.realizada}">
-                        Excluir
-                    </a>
+                    
                 </td>
             </tr>
 
@@ -161,12 +167,30 @@ td {
 	<script>
 	    function excluir(foiRealizada) {
 	    		
-	        if (foiRealizada == true || foiRealizada == "true") {
-		        alert("A entrega não pode ser excluída porque ainda não foi realizada!")
+	        if (foiRealizada == true) {
+		        alert("A entrega não pode ser excluída porque já foi realizada!")
 		        return false;
 	        } 
-	        return confirm("Tem certeza de que deseja excluir esta entrega?");	
+	        var confirmacao = confirm("Tem certeza de que deseja excluir esta entrega?");
+	        
+	        if (confirmacao){
+	        	alert("Entrega excluida com sucesso!")
+	        	return true;
+	        } else {
+	        	return false;
+	        }
 	    }	
+	    
+	    function concluir(foiRealizada) {
+	    	var confirmacao = confirm("Tem certeza que a entrega foi concluida?")
+	    
+	    	if (confirmacao){
+	    		alert("Entrega concluida com sucesso!");
+	    		return true;
+	    	} else {
+	    		return false;
+	    	}
+	    }
 	</script>
 
 </body>

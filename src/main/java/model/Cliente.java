@@ -85,12 +85,20 @@ public class Cliente {
         }
     }
 
-    @Override
-    public String toString() {
-        return  "\nCliente{" +
-                " Nome='" + nome + '\'' +
-                ", cpf/Cnpj='" + cpfCnpj + '\'' +
-                ", razaoSocial='" + razaoSocial + '\'' + "}";
+    public String getDocumentoFormatado() {
+        if (this.cpfCnpj == null) return "";
+
+        String documento = this.cpfCnpj.replaceAll("\\D", "");
+
+        if (documento.length() == 11) {
+            return documento.substring(0, 3) + "." + documento.substring(3, 6) + "." + 
+            		documento.substring(6, 9) + "-" + documento.substring(9, 11);
+        } else if (documento.length() == 14) {
+            return documento.substring(0, 2) + "." + documento.substring(2, 5) + "." + 
+            		documento.substring(5, 8) + "/" + documento.substring(8, 12) + "-" + documento.substring(12, 14);
+        }
+        
+        return documento;
     }
 }
 

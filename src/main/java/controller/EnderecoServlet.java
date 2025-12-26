@@ -74,7 +74,10 @@ public class EnderecoServlet extends HttpServlet {
 		
 		Endereco endereco = new Endereco();
 		
-		endereco.setCep(request.getParameter("cep"));
+		String cepComMascara = request.getParameter("cep");
+		String cep = cepComMascara.replaceAll("\\D", "");
+		
+		endereco.setCep(cep);
 		endereco.setRua(request.getParameter("rua"));
 		endereco.setNumero(request.getParameter("numero"));
 		endereco.setBairro(request.getParameter("bairro"));

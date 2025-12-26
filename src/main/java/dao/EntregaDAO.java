@@ -103,6 +103,7 @@ public class EntregaDAO {
                     int quantidade = rsProEnt.getInt("quantidade");
                     double frete = rsProEnt.getDouble("frete");
                     double valor = rsProEnt.getDouble("valor");
+                    String descricao = rsProEnt.getString("descricao");
 
                     if (idProduto != 0) {
                         ProdutoEntrega proEnt = new ProdutoEntrega();
@@ -111,6 +112,7 @@ public class EntregaDAO {
                         p.setIdProduto(idProduto);
                         p.setNome(nomeProduto);
                         p.setValor(valor);
+                        p.setDescricao(descricao);
 
                         proEnt.setProduto(p);
                         proEnt.setQuantidade(quantidade);

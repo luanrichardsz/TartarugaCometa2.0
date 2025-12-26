@@ -65,10 +65,17 @@ public class ProdutoServlet extends HttpServlet {
 		
 		Produto produto = new Produto();
 		
+		String pesoComMascara = request.getParameter("peso");
+		String peso = pesoComMascara.replace(" kg", " ");
+		
+		String valorComMascara = request.getParameter("valor");
+		String valor = valorComMascara.replace("R$ ", "").replace(".", "").replace(",", ".");
+		
 		produto.setNome(request.getParameter("nome"));
-		produto.setPeso(Double.parseDouble(request.getParameter("peso")));
-		produto.setVolume(Double.parseDouble(request.getParameter("volume")));
-		produto.setValor(Double.parseDouble(request.getParameter("valor")));
+		produto.setPeso(Double.parseDouble(peso));
+		produto.setVolume(Integer.parseInt(request.getParameter("volume")));
+		produto.setValor(Double.parseDouble(valor));
+		produto.setDescricao(request.getParameter("descricao"));
 		
 		ProdutoDAO produtoDAO = new ProdutoDAO();
 		
@@ -100,16 +107,17 @@ public class ProdutoServlet extends HttpServlet {
 		String paramPeso = request.getParameter("peso");
 		String paramVolume = request.getParameter("volume");
 		String paramValor = request.getParameter("valor");
+		String novaDescricao = request.getParameter("descricao");
 		String paramId = request.getParameter("idProduto");
 		
 		Double novoPeso = Double.parseDouble(paramPeso);
-		Double novoVolume = Double.parseDouble(paramVolume);
+		int novoVolume = Integer.parseInt(paramVolume);
 		Double novoValor = Double.parseDouble(paramValor);
 		Integer idProduto = Integer.parseInt(paramId);
 		
 		ProdutoDAO produtoDAO = new ProdutoDAO();
 		
-		produtoDAO.atualizar(novoNome, novoPeso, novoVolume, novoValor, idProduto);
+		produtoDAO.atualizar(novoNome, novoPeso, novoVolume, novoValor, novaDescricao, idProduto);
 		
 		response.sendRedirect("produto?acao=listar");
 	}

@@ -15,15 +15,16 @@ public class ProdutoDAO {
     }
 
     public void cadastrar(Produto produto){
-        String sql = "INSERT INTO Produto (nome, peso, volume, valor) VALUES (?, ?, ?,?)";
+        String sql = "INSERT INTO Produto (nome, peso, volume, valor, descricao) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = connection.getConnection()){
             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             ps.setString(1, produto.getNome());
             ps.setDouble(2, produto.getPeso());
-            ps.setDouble(3, produto.getVolume());
+            ps.setInt(3, produto.getVolume());
             ps.setDouble(4, produto.getValor());
+            ps.setString(5, produto.getDescricao());
 
             System.out.println("Produto Cadastrado");
 
@@ -58,10 +59,11 @@ public class ProdutoDAO {
             	int idProduto = rs.getInt("idProduto");
                 String nome = rs.getString("nome");
                 double peso = rs.getDouble("peso");
-                double volume = rs.getDouble("volume");
+                int volume = rs.getInt("volume");
                 double valor = rs.getDouble("valor");
+                String descricao = rs.getString("descricao");
 
-                produtos.add(new Produto(idProduto, nome, peso, volume, valor));
+                produtos.add(new Produto(idProduto, nome, peso, volume, valor, descricao));
             }
         } catch (Exception e){
             throw new RuntimeException(e);
@@ -71,18 +73,19 @@ public class ProdutoDAO {
         return produtos;
     }
 
-    public void atualizar(String nome, double peso, double volume, double valor, int idProduto){
-        String sql = "UPDATE Produto SET nome = ?, peso = ?, volume = ?, valor = ? WHERE idproduto = ?";
+    public void atualizar(String nome, double peso, int volume, double valor, String descricao, int idProduto){
+        String sql = "UPDATE Produto SET nome = ?, peso = ?, volume = ?, valor = ?, descricao = ? WHERE idproduto = ?";
 
         try(Connection cnn = connection.getConnection()){
             PreparedStatement ps = cnn.prepareStatement(sql);
 
             ps.setString(1, nome);
             ps.setDouble(2, peso);
-            ps.setDouble(3, volume);
+            ps.setInt(3, volume);
             ps.setDouble(4, valor);
+            ps.setString(5, descricao);
 
-            ps.setInt(5, idProduto);
+            ps.setInt(6, idProduto);
 
             ps.execute();
 
@@ -126,8 +129,9 @@ public class ProdutoDAO {
                 produto.setIdProduto(rs.getInt("idProduto"));
                 produto.setNome(rs.getString("nome"));
                 produto.setPeso(rs.getDouble("peso"));
-                produto.setVolume(rs.getDouble("volume"));
+                produto.setVolume(rs.getInt("volume"));
                 produto.setValor(rs.getDouble("valor"));
+                produto.setDescricao(rs.getString("descricao"));
                 
                 return produto;
                 

@@ -89,6 +89,19 @@ public class Endereco {
 		this.complemento = complemento;
 	}
 	
+	public String getCepFormatado() {
+	    if (this.cep == null || this.cep.isEmpty()) {
+	        return "";
+	    }
+	    
+	    String cepFormatado = this.cep.replaceAll("\\D", "");
+	    
+	    if (cepFormatado.length() == 8) {
+	        return cepFormatado.substring(0, 5) + "-" + cepFormatado.substring(5, 8);
+	    }
+	    
+	    return cepFormatado;
+	}
 //    @Override
 //    public String toString() {
 //        return "\nEndereco{ " +

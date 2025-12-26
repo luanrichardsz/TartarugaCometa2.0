@@ -77,7 +77,7 @@
 			 
 			<tr>
 				<td>
-				    <select name="remetente" id="remetente" required>
+				    <select name="remetente" id="remetente" onchange="sincronizarFiltroClientes('remetente',  'destinatario')" required>
 				        <option value="">Selecione um cliente</option>
 				        
 				        <c:forEach items="${clientes}" var="cliente">
@@ -95,16 +95,21 @@
 			        <c:forEach items="${produtos}" var="produto">
 			            <option value="${produto.idProduto}" 
 			                    data-valor="${produto.valor}" 
-			                    data-peso="${produto.peso}">
+			                    data-peso="${produto.peso}"
+			                    data-descricao="${produto.descricao}">
 			                ${produto.nome}
 			            </option>
 			        </c:forEach>
 			    </select>
 			    
 			    <div id="dados-selecionados" style="margin-top: 10px; font-size: 12px; color: #555;">
-			        Peso: <span id="display-peso">0</span> kg | 
-			        Valor Unitário: R$ <span id="display-valor">0.00</span>
-			    </div>
+				    Peso: <span id="display-peso">0</span> kg | 
+				    Valor Unitário: R$ <span id="display-valor">0.00</span> <br>
+				    
+				    <div id="container-descricao" style="display: none;">
+				        Descrição: <span id="display-descricao"></span>
+				    </div>
+				</div>
 			</td>
 				
 				<td>
@@ -116,7 +121,7 @@
 				</td>
 				
 				<td>
-				    <select name="destinatario" id="destinatario" onchange="apagarRemetente()" required>
+				    <select name="destinatario" id="destinatario" onchange="sincronizarFiltroClientes('destinatario',  'remetente')" required>
 				        <option value="">Selecione um cliente</option>
 				        
 				        <c:forEach items="${clientes}" var="cliente">
@@ -159,39 +164,57 @@
 	}
 
 	function atualizarInfoProduto() {
-	    const select = document.getElementById('produto');
-	    
+		const select = document.getElementById('produto');
 	    const opcaoSelecionada = select.options[select.selectedIndex];
 	    
 	    const valor = opcaoSelecionada.getAttribute('data-valor');
 	    const peso = opcaoSelecionada.getAttribute('data-peso');
+	    const descricao = opcaoSelecionada.getAttribute('data-descricao');
 	    
-	    if (valor && peso) {
+	    const containerDesc = document.getElementById('container-descricao');
+	    const displayDesc = document.getElementById('display-descricao');
+
+	    if (select.value !== "") {
 	        document.getElementById('display-peso').innerText = peso;
 	        document.getElementById('display-valor').innerText = valor;
+
+	        if (descricao && descricao.trim() !== "" && descricao !== "null") {
+	            displayDesc.innerText = descricao;
+	            containerDesc.style.display = "block"
+	        } else {
+	            containerDesc.style.display = "none";
+	        }
+	        
+	        calcularFrete();
+	        
 	    } else {
 	        document.getElementById('display-peso').innerText = "0";
 	        document.getElementById('display-valor').innerText = "0.00";
+	        containerDesc.style.display = "none";
+	        document.getElementById("frete").value = 0;
 	    }
 	}
 	
-	
-	function apagarRemetente() {
-	    const remetenteSelect = document.getElementById("remetente");
-	    const destinatarioSelect = document.getElementById("destinatario");
+	function sincronizarFiltroClientes(idOrigem, idDestino) {
+	    const origem = document.getElementById(idOrigem);
+	    const destino = document.getElementById(idDestino);
+	    
+	    const valorSelecionado = origem.value;
 
-	    const remetenteId = remetenteSelect.value;
-
-	    for (let option of destinatarioSelect.options) {
+	    for (let option of destino.options) {
 	        option.disabled = false;
+	        option.hidden = false;
+	        option.style.display = "block"; 
 
-	        if (option.value === remetenteId && remetenteId !== "") {
+	        if (option.value === valorSelecionado && valorSelecionado !== "") {
 	            option.disabled = true;
+	            option.hidden = true;
+	            option.style.display = "none"; 
 	        }
 	    }
 
-	    if (destinatarioSelect.value === remetenteId) {
-	        destinatarioSelect.value = "";
+	    if (destino.value === valorSelecionado) {
+	        destino.value = "";
 	    }
 	}
 	</script>

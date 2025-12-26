@@ -27,8 +27,9 @@ CREATE TABLE Produto (
 	idProduto SERIAL PRIMARY KEY,
 	nome VARCHAR(40),
 	peso DOUBLE PRECISION,
-	volume DOUBLE PRECISION,
-	valor NUMERIC(10,2)
+	volume INTEGER,
+	valor NUMERIC(10,2),
+	descricao VARCHAR(80)
 );
 
 CREATE TABLE Entrega (

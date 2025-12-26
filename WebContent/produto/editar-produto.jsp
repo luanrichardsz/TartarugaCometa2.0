@@ -23,6 +23,7 @@
 		Peso: <input type="text" value="${produto.peso}" name="peso"> <br>
 		Volume: <input type="text" value="${produto.volume}" name="volume"> <br>
 		Valor: <input type="text" value="${produto.valor}" name="valor"> <br>
+		Descrição: <input type="text" value="${produto.descricao}" name="descricao"> <br>
 		
 		<input type="submit">
 	</form>

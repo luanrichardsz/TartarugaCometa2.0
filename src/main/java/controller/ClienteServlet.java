@@ -64,8 +64,12 @@ public class ClienteServlet extends HttpServlet {
 				
 		Cliente cliente = new Cliente();
 		
+		String cpfCnpjComMascara = request.getParameter("cpfCnpj");
+		String cpfCnpj = cpfCnpjComMascara.replaceAll("\\D", "");
+
+		
 		cliente.setNome(request.getParameter("nomeCliente"));
-		cliente.setCpfCnpj(request.getParameter("cpfCnpj"));
+		cliente.setCpfCnpj(cpfCnpj);
 		cliente.setRazaoSocial(request.getParameter("razaoSocial"));
 		cliente.tipoCliente();
 		

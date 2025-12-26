@@ -7,7 +7,7 @@
 <title>Cadastrar Cliente</title>
 </head>
 <body>
-	<h1 style="text-align: center"> Cadastrar Clientes </h1>
+	<h1 style="text-align: center"> Cadastrar Cliente </h1>
 	
 	<label>Escolha o tipo da conta:</label>
 	
@@ -21,16 +21,16 @@
 	
 	<form id="formFisica" action="/TartarugaCometa/cliente?acao=salvarTemp" method="post" hidden>
 		
-		Nome: <input type="text" name="nomeCliente" pattern="^[A-Za-zÀ-ÿ\s]+$" maxlength="50" title="Somente letras" required style="width: 25ch"> <br>
-		CPF: <input type="text" name="cpfCnpj" pattern="\d{11}" title="O CPF deve conter 11 digitos e somente números" maxlength="11" required > <br>
+		Nome: <input type="text" name="nomeCliente" pattern="^[A-Za-zÀ-ÿ\s]+$" maxlength="50" title="Somente letras" oninput="somenteLetras(this)" required style="width: 25ch"> <br>
+		CPF: <input type="text" name="cpfCnpj" pattern="[\d\D]{14}" title="O CPF deve conter 11 digitos e somente números" oninput="mascaraCPF(this)" maxlength="14" required > <br>
 		<button type="submit"> Salvar </button>
 		
 	</form>
 	
 	<form id="formJuridica" action="/TartarugaCometa/cliente?acao=salvarTemp" method="post" hidden>
-		Nome: <input type="text" name="nomeCliente"  maxlength="50" pattern="^[A-Za-zÀ-ÿ\s]+$" title="Somente letras" style="width: 25ch" required> <br>
-		CNPJ: <input type="text" name="cpfCnpj" pattern="\d{14}" maxlength="14" title="O CNPJ deve conter 14 digitos e somente números" required > <br>
-		Razão Social: <input type="text" name="razaoSocial" required style="width: 30ch"> <br>
+		Nome: <input type="text" name="nomeCliente"  maxlength="50" pattern="^[A-Za-zÀ-ÿ\s]+$" title="Somente letras" oninput="somenteLetras(this)" style="width: 25ch" required> <br>
+		CNPJ: <input type="text" name="cpfCnpj" pattern="[\d\D]{18}" maxlength="18" title="O CNPJ deve conter 14 digitos e somente números" oninput="mascaraCNPJ(this)" required > <br>
+		Razão Social: <input type="text" name="razaoSocial" oninput="somenteLetras(this)" required style="width: 30ch"> <br>
 		<button type="submit"> Salvar </button>
 	</form> <br>
 	
@@ -51,6 +51,30 @@
 				juridica.hidden = false;
 			}
 		}
+		
+        function mascaraCPF(input) {
+            let v = input.value.replace(/\D/g, "");
+            if (v.length > 11) v = v.substring(0, 11);
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            input.value = v;
+        }
+
+        function mascaraCNPJ(input) {
+            let v = input.value.replace(/\D/g, "");
+            if (v.length > 14) v = v.substring(0, 14);
+            v = v.replace(/^(\d{2})(\d)/, "$1.$2");
+            v = v.replace(/^(\d{2}).(\d{3})(\d)/, "$1.$2.$3");
+            v = v.replace(/.(\d{3})(\d)/, ".$1/$2");
+            v = v.replace(/(\d{4})(\d)/, "$1-$2");
+            input.value = v;
+        }
+        
+        function somenteLetras(input){
+        	input.value = input.value.replace(/[^A-Za-zÀ-ÿ\s]/g, "");
+        }
+		
 	</script>
 </body>
 </html>
