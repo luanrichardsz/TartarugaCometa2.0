@@ -80,8 +80,9 @@ CREATE DATABASE tartaruga_cometa;
 ```
 2. Conecte-se ao banco
 3. Copie os comandos do arquivo createTable.sql
+   
     /home/estagiario3/eclipse-workspace/TartarugaCometa/bd/createTable.sql
-5. Crie as tabelas
+4. Crie as tabelas
 
 - Cliente
 - Endereco
@@ -113,9 +114,8 @@ private static final String PASSWORD = "sua_senha";
 
 1. Clone o projeto:
 git clone https://github.com/seu-usuario/TartarugaCometa.git
-2. Importe o projeto como Gradle Project na sua IDE
-3. Configure o Apache Tomcat no ambiente de desenvolvimento
-4. Execute o projeto no servidor
+2. Configure o Apache Tomcat no ambiente de desenvolvimento
+3. Execute o projeto no servidor
 
 ## 🌐 Acesso à Aplicação
 
