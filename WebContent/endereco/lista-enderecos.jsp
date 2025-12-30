@@ -39,6 +39,7 @@
 </style>
 </head>
 <body>
+	<button onclick="history.back()"> Voltar </button> <br>
 
 	<h1 style="text-align: center"> Endereços Cadastrados </h1>
 	
@@ -92,7 +93,9 @@
     </table>
 	
     <br>
-	<a href="adm.jsp"> Tela Principal </a>
+	<a href="adm.jsp"> Tela Principal </a> 
+	|
+	<a href="cliente?acao=listar"> Clientes Cadastrados </a>
 
 	<script type="text/javascript">
 		function excluir() {
@@ -102,6 +105,7 @@
 				alert("Endereço excluído com sucesso!");
 				return true;
 			} else {
+		    	alert("Operação cancelada!")
 				return false;
 			}
 		}

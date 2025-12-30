@@ -51,6 +51,7 @@
 
 </head>
 <body>
+	<button onclick="history.back()"> Voltar </button> <br>
 
 	<h1 style="text-align:center"> Cadastrar Entrega </h1>
 
@@ -77,7 +78,7 @@
 			 
 			<tr>
 				<td>
-				    <select name="remetente" id="remetente" onchange="sincronizarFiltroClientes('remetente',  'destinatario')" required>
+				    <select name="remetente" id="remetente" onchange="sincronizarFiltroClientes('remetente',  'destinatario') ; filtrarProdutosPorCliente();" required>
 				        <option value="">Selecione um cliente</option>
 				        
 				        <c:forEach items="${clientes}" var="cliente">
@@ -90,26 +91,29 @@
 				</td>
 				
 			<td>
-			    <select name="produto" id="produto" onchange="atualizarInfoProduto()" required>
-			        <option value=""> Selecione o produto </option>
+			    <select name="produto" id="produto" onchange="atualizarInfoProduto()" required disabled>
+			        <option value="">Selecione o produto</option>
 			        <c:forEach items="${produtos}" var="produto">
-			            <option value="${produto.idProduto}" 
-			                    data-valor="${produto.valor}" 
+			            <option value="${produto.idProduto}"
+			                    data-valor="${produto.valor}"
 			                    data-peso="${produto.peso}"
-			                    data-descricao="${produto.descricao}">
+			                    data-descricao="${produto.descricao}"
+			                    data-estoque="${produto.volume}"
+			                    data-cliente="${produto.cliente != null ? produto.cliente.idCliente : ''}">
 			                ${produto.nome}
 			            </option>
 			        </c:forEach>
 			    </select>
 			    
 			    <div id="dados-selecionados" style="margin-top: 10px; font-size: 12px; color: #555;">
-				    Peso: <span id="display-peso">0</span> kg | 
-				    Valor Unitário: R$ <span id="display-valor">0.00</span> <br>
-				    
-				    <div id="container-descricao" style="display: none;">
-				        Descrição: <span id="display-descricao"></span>
-				    </div>
-				</div>
+			        Peso: <span id="display-peso">0</span> | 
+			        Valor Unitário: R$ <span id="display-valor">0.00</span> <br>
+			        Estoque Atual: <span id="display-estoque" style="font-weight: bold; color: #2c3e50;">0</span> <br>
+			        
+			        <div id="container-descricao" style="display: none;">
+			            Descrição: <span id="display-descricao"></span>
+			        </div>
+			    </div>
 			</td>
 				
 				<td>
@@ -117,7 +121,15 @@
 				</td>
 				
 				<td>
-					<input type="number" name="frete" id="frete" readonly> 
+				    <label for="frete" style="display:block; font-size: 15px;">
+                	<strong> Frete (10% sobre o total) </strong>
+				    </label>
+				    <div style="position: relative; display: flex; align-items: center;">
+				        <span style="position: absolute; left: 10px;">R$</span>
+				        <input type="text" name="frete" id="frete" readonly 
+				               style="padding-left: 35px; border: 1px solid #ddd;" 
+				               value="0,00">
+				    </div>
 				</td>
 				
 				<td>
@@ -136,63 +148,88 @@
 			</tr>
 		</table>
 	</form>
-	
-	<a href="adm.jsp"> Tela Principal </a> - <a href="entrega?acao=listar"> Entregas Cadastradas </a>
-	
+	<div style="margin-top: 10px; text-align:center;">
+		<a href="adm.jsp"> Tela Principal </a> - <a href="entrega?acao=listar"> Entregas Cadastradas </a>
+	</div>
 	
 	<script type="text/javascript">
 		
-	function calcularFrete() {
-
-	    const produtoSelect = document.getElementById("produto");
-	    const opcaoSelect = produtoSelect.options[produtoSelect.selectedIndex];
-
-	    const valorProduto = parseFloat(opcaoSelect.dataset.valor);
-	    const quantidade = parseInt(document.getElementById("quantidade").value);
-
-	    if (isNaN(valorProduto) || isNaN(quantidade)) {
-	        document.getElementById("frete").value = 0;
+	function atualizarInfoProduto() {
+	    const select = document.getElementById('produto');
+	    const opcaoSelecionada = select.options[select.selectedIndex];
+	    
+	    if (!select.value || select.value === "") {
+	        resetarCampos();
 	        return;
 	    }
 
-	    const totalCompra = valorProduto * quantidade;
-	    const frete = totalCompra * 0.10;
-
-	    console.log(totalCompra);
-
-	    document.getElementById("frete").value = frete.toFixed(2);
-	}
-
-	function atualizarInfoProduto() {
-		const select = document.getElementById('produto');
-	    const opcaoSelecionada = select.options[select.selectedIndex];
-	    
 	    const valor = opcaoSelecionada.getAttribute('data-valor');
 	    const peso = opcaoSelecionada.getAttribute('data-peso');
+	    const estoque = opcaoSelecionada.getAttribute('data-estoque');
 	    const descricao = opcaoSelecionada.getAttribute('data-descricao');
 	    
-	    const containerDesc = document.getElementById('container-descricao');
+	    const displayPeso = document.getElementById('display-peso');
+	    const displayValor = document.getElementById('display-valor');
+	    const displayEstoque = document.getElementById('display-estoque');
 	    const displayDesc = document.getElementById('display-descricao');
+	    const containerDesc = document.getElementById('container-descricao');
+	    const inputQuantidade = document.getElementById('quantidade');
 
-	    if (select.value !== "") {
-	        document.getElementById('display-peso').innerText = peso;
-	        document.getElementById('display-valor').innerText = valor;
-
-	        if (descricao && descricao.trim() !== "" && descricao !== "null") {
-	            displayDesc.innerText = descricao;
-	            containerDesc.style.display = "block"
-	        } else {
-	            containerDesc.style.display = "none";
-	        }
-	        
-	        calcularFrete();
-	        
-	    } else {
-	        document.getElementById('display-peso').innerText = "0";
-	        document.getElementById('display-valor').innerText = "0.00";
-	        containerDesc.style.display = "none";
-	        document.getElementById("frete").value = 0;
+	    if (displayEstoque) {
+	        displayEstoque.innerText = estoque; 
 	    }
+
+	    if (parseInt(estoque) <= 0) {
+	        alert("Produto sem estoque!");
+	        select.value = "";
+	        resetarCampos();
+	        return;
+	    }
+
+	    inputQuantidade.disabled = false; 
+	    inputQuantidade.value = 1;        
+	    inputQuantidade.max = estoque; 
+
+	    let pesoNum = parseFloat(peso);
+	    displayPeso.innerText = (pesoNum < 1) ? (pesoNum * 1000).toFixed(0) + " gramas" : pesoNum + " kg";
+	    
+	    displayValor.innerText = valor;
+
+	    if (descricao && descricao.trim() !== "" && descricao !== "null") {
+	        displayDesc.innerText = descricao;
+	        containerDesc.style.display = "block";
+	    } else {
+	        displayDesc.innerText = "";
+	        containerDesc.style.display = "none";
+	    }
+	    
+	    calcularFrete();
+	}
+
+	function calcularFrete() {
+	    const valor = parseFloat(document.getElementById('produto').selectedOptions[0].dataset.valor);
+	    const qtd = parseInt(document.getElementById('quantidade').value);
+	    const frete = (valor * qtd) * 0.10;
+
+	    document.getElementById('frete').value = frete.toLocaleString('pt-BR', {
+	        minimumFractionDigits: 2
+	    });
+	}
+
+	
+	function resetarCampos() {
+	    document.getElementById('display-peso').innerText = "0";
+	    document.getElementById('display-valor').innerText = "0.00";
+	    document.getElementById('display-estoque').innerText = "0"; 
+	    document.getElementById('display-descricao').innerText = "";
+	    
+	    document.getElementById('container-descricao').style.display = "none";
+	    
+	    const inputQtd = document.getElementById('quantidade');
+	    inputQtd.value = 0; 
+	    inputQtd.disabled = true;
+	    
+	    document.getElementById("frete").value = "0,00"; 
 	}
 	
 	function sincronizarFiltroClientes(idOrigem, idDestino) {
@@ -217,6 +254,39 @@
 	        destino.value = "";
 	    }
 	}
+	
+	function filtrarProdutosPorCliente() {
+	    const selectCliente = document.getElementById("remetente");
+	    const selectProduto = document.getElementById("produto");
+	    const clienteSelecionado = selectCliente.value;
+
+	    if (clienteSelecionado === "") {
+	        selectProduto.disabled = true;
+	        resetarCampos();
+	        return;
+	    }
+
+	    selectProduto.disabled = false;
+	    selectProduto.value = "";
+
+	    for (let option of selectProduto.options) {
+	        if (option.value === "") continue;
+	        const clienteProduto = option.dataset.cliente;
+	        const produtoSemCliente = !clienteProduto || clienteProduto === "null";
+	        const produtoDoCliente = clienteProduto === clienteSelecionado;
+
+	        if (produtoSemCliente || produtoDoCliente) {
+	            option.hidden = false;
+	            option.disabled = false;
+	        } else {
+	            option.hidden = true;
+	            option.disabled = true;
+	        }
+	    }
+
+	    resetarCampos(); 
+	}
+
 	</script>
 </body>
 </html>

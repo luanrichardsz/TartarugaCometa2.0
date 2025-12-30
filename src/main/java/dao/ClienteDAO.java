@@ -49,8 +49,8 @@ public class ClienteDAO {
     }
 
     public ArrayList<Cliente> listar(){
-        String sql = "SELECT idCliente ,nome, cpf_Cnpj, razaoSocial, endereco_id from Cliente ORDER BY idCliente ASC";
-
+    	String sql = "SELECT * FROM Cliente WHERE ativo = TRUE ORDER BY idCliente ASC";
+    	
         ArrayList<Cliente> clientes = new ArrayList<>();
 
         try(Connection cnn = connection.getConnection()){
@@ -73,56 +73,19 @@ public class ClienteDAO {
     }
 
     public void apagar(int idCliente){
-        String sqlEntrega  = "DELETE FROM Entrega WHERE clienteremetente_id = ? OR clientedestinatario_id = ?";
-        String sqlEndereco = "SELECT Endereco_ID FROM Cliente WHERE idCliente = ?";
-        String sqlDeleteEndereco = "DELETE FROM Endereco WHERE idendereco = ?;";
-        String sqlDeleteCliente   = "DELETE FROM Cliente WHERE idCliente = ?";
+    	String sql = "UPDATE Cliente SET ativo = FALSE WHERE idCliente = ?";
 
-        //Deletando a Entrega
-        try(Connection cnn = connection.getConnection()){
-            PreparedStatement psEntrega = cnn.prepareStatement(sqlEntrega);
-            psEntrega.setInt(1, idCliente);
-            psEntrega.setInt(2, idCliente);
-
-            psEntrega.execute();
-
-            System.out.println("Apagando Entregas Referente ao Cliente");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        };
-
-        //Buscando e Deletando o ID Endereco
-        try(Connection cnn = connection.getConnection()){
-            //Executando a SQL de Busca de Endereco_ID no Cliente
-            PreparedStatement psEndereco = cnn.prepareStatement(sqlEndereco);
-            psEndereco.setInt(1, idCliente);
-            ResultSet rsEndereco = psEndereco.executeQuery();
-
-            int idEndereco = 0;
-            //Armazenando na variavel idEndereco
-            while (rsEndereco.next()) {
-                idEndereco = rsEndereco.getInt("Endereco_ID");
-            }
-
-            //Deletando o cliente com o Endereco_ID ja armazenado em outra variavel
-            PreparedStatement ps = cnn.prepareStatement(sqlDeleteCliente);
+        try (Connection cnn = connection.getConnection()){
+            PreparedStatement ps = cnn.prepareStatement(sql);
             ps.setInt(1, idCliente);
             ps.execute();
-            System.out.println("Cliente Deletado com Sucesso!");
-
-            // Deletendo o Endereco quando for diferente de 0
-            if (idEndereco != 0) {
-                PreparedStatement psDeleteEndereco = cnn.prepareStatement(sqlDeleteEndereco);
-                psDeleteEndereco.setInt(1, idEndereco);
-                psDeleteEndereco.execute();
-                System.out.println("Endereço Relacionado ao Cliente Deletado com Sucesso!");
-            }
-
+            
+            System.out.println("Cliente ID: " + idCliente + " desativado. Histórico preservado.");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-
+    
     public void atualizar(String nome, int idCliente) {
     	String sql = "UPDATE Cliente SET nome = ? WHERE idCliente = ?";
     	

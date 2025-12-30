@@ -37,6 +37,9 @@ public class ClienteServlet extends HttpServlet {
 		case "editarCliente":
 			editarCliente(request, response);
 			break;
+		case "gerenciarProduto":
+			gerenciarProduto(request, response);
+			break;
 		case "deletarCliente":
 			deletarCliente(request, response);
 			break;
@@ -127,5 +130,22 @@ public class ClienteServlet extends HttpServlet {
 		clienteDAO.apagar(idCliente);
 		
 		response.sendRedirect("cliente?acao=listar");
+	}
+	
+	protected void gerenciarProduto (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String paramId = request.getParameter("idCliente");
+		Integer idCliente = Integer.parseInt(paramId);
+		
+		ClienteDAO clienteDAO = new ClienteDAO();
+		
+		Cliente cliente = clienteDAO.buscarPorId(idCliente);
+		
+		System.out.println(idCliente);
+		
+		HttpSession session = request.getSession();
+		
+		session.setAttribute("clienteLogado", cliente);
+		
+		response.sendRedirect("produto?acao=listar");
 	}
 }

@@ -3,8 +3,6 @@
     
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>	
 
-<c:url value="/endereco" var="editarEndereco"/>	
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,7 +18,7 @@
 		<input type="hidden" name="acao" value="editarEndereco"/>
 		
 		ID: <input type="text"  value="${endereco.idEndereco}" name="idEndereco" readonly/> <br>
-		CEP: <input type="text" value="${endereco.cep}" name="cep"/> <br>
+		CEP: <input type="text" value="${endereco.cep}" pattern="[\d\D]{9}" maxlength="9" oninput="mascaraCEP(this)" name="cep"/> <br>
 		Rua: <input type="text" value="${endereco.rua}" name="rua"/> <br>
 		Número <input type="text" value="${endereco.numero}" name="numero"/> <br>
 		Bairro: <input type="text" value="${endereco.bairro}" name="bairro"/> <br>
@@ -31,5 +29,14 @@
 		<input type="submit">
 		
 	</form>
+	
+	<script type="text/javascript">
+	    function mascaraCEP(input) {
+	        let v = input.value.replace(/\D/g, "");
+	        v = v.replace(/^(\d{5})(\d)/, "$1-$2");
+	        input.value = v;
+	    }
+	</script>
+	
 </body>
 </html>

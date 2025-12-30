@@ -14,46 +14,42 @@ public class EntregaDAO {
         this.connection = new ConnectionFactory();
     }
 
-    public void cadastrar(Entrega entrega, ArrayList<ProdutoEntrega> mercadorias){
-        String sql = "INSERT INTO Entrega ( clienteRemetente_ID, clienteDestinatario_ID) VALUES (?, ?)";
+    public void cadastrar(Entrega entrega, ArrayList<ProdutoEntrega> mercadorias) {
+        String sqlEntrega = "INSERT INTO Entrega (clienteRemetente_ID, clienteDestinatario_ID) VALUES (?, ?)";
+        String sqlProdutoEntrega = "INSERT INTO Produto_Entrega (entrega_ID, produto_ID, quantidade, frete) VALUES (?, ?, ?, ?)";
+        String sqlAtualizarEstoque = "UPDATE Produto SET volume = volume - ? WHERE idproduto = ?";
+        
+        try (Connection conn = connection.getConnection()) {
 
-        try (Connection conn = connection.getConnection()){
-            PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            try (PreparedStatement ps = conn.prepareStatement(sqlEntrega, Statement.RETURN_GENERATED_KEYS);
+                 PreparedStatement psProdutoEntrega = conn.prepareStatement(sqlProdutoEntrega);
+                 PreparedStatement psUpdateEstoque = conn.prepareStatement(sqlAtualizarEstoque)) {
 
-            ps.setInt(1, entrega.getClienteDestinatario().getIdCliente());
-            ps.setInt(2, entrega.getClienteRemetente().getIdCliente());
+                ps.setInt(1, entrega.getClienteDestinatario().getIdCliente());
+                ps.setInt(2, entrega.getClienteRemetente().getIdCliente());
+                ps.executeUpdate();
 
-            System.out.println("Dados dos Clientes Cadastrado");
-
-            ps.executeUpdate();
-
-            //Pegar o ID da Entrega que foi criada
-            int idEntrega = -1;
-            try (java.sql.ResultSet rs = ps.getGeneratedKeys()){
-                if (rs.next()){
-                    idEntrega = rs.getInt(1);
-                } else {
-                    throw new SQLException("Falha ao criar ID da Entrega, nenhum retornado");
+                int idEntrega = -1;
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) idEntrega = rs.getInt(1);
                 }
+
+                for (ProdutoEntrega p : mercadorias) {
+                    psProdutoEntrega.setInt(1, idEntrega);
+                    psProdutoEntrega.setInt(2, p.getProduto().getIdProduto());
+                    psProdutoEntrega.setInt(3, p.getQuantidade());
+                    psProdutoEntrega.setDouble(4, p.getFrete());
+                    psProdutoEntrega.executeUpdate();
+
+                    psUpdateEstoque.setInt(1, p.getQuantidade());
+                    psUpdateEstoque.setInt(2, p.getProduto().getIdProduto()); 
+                    psUpdateEstoque.executeUpdate();
+                }
+
+            } catch (SQLException e) {
+                throw new SQLException("Erro na transação. Estoque pode ser insuficiente.", e);
             }
-
-            //Preparar o insert da table produto_entrega
-            String sqlProdutoEntrega = "INSERT INTO Produto_Entrega (entrega_ID, produto_ID, quantidade, frete) VALUES (?, ?, ?, ?)";
-            PreparedStatement psProdutoEntrega = conn.prepareStatement(sqlProdutoEntrega);
-
-            //Laço de repetição para adicionar Produtos da lista
-            for(ProdutoEntrega p : mercadorias) {
-                psProdutoEntrega.setInt(1, idEntrega);
-                psProdutoEntrega.setInt(2, p.getProduto().getIdProduto());
-                psProdutoEntrega.setInt(3, p.getQuantidade());
-                psProdutoEntrega.setDouble(4, p.getFrete());
-
-                psProdutoEntrega.executeUpdate();
-            }
-
-            System.out.println("Mercadoria cadastrada em Entrega!");
-
-        } catch (SQLException e){
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }

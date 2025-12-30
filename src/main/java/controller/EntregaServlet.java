@@ -63,11 +63,13 @@ public class EntregaServlet extends HttpServlet {
 	protected void salvarEntrega(HttpServletRequest request, HttpServletResponse response)
 	        throws ServletException, IOException {
 
+		String freteStr = request.getParameter("frete").replace("R$", "").replace(".", "").replace(",", ".").trim();
+		
 	    int idRemetente = Integer.parseInt(request.getParameter("remetente"));
 	    int idDestinatario = Integer.parseInt(request.getParameter("destinatario"));
 	    int idProduto = Integer.parseInt(request.getParameter("produto"));
 	    int quantidade = Integer.parseInt(request.getParameter("quantidade"));
-	    double frete = Double.parseDouble(request.getParameter("frete"));
+		double frete = Double.parseDouble(freteStr);
 
 	    Cliente remetente = new Cliente();
 	    remetente.setIdCliente(idRemetente);

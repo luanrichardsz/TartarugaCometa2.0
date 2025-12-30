@@ -7,7 +7,11 @@
 <title>Cadastrar Cliente</title>
 </head>
 <body>
+	<button onclick="history.back()"> Voltar </button> <br> 
+
+
 	<h1 style="text-align: center"> Cadastrar Cliente </h1>
+	
 	
 	<label>Escolha o tipo da conta:</label>
 	
@@ -21,7 +25,7 @@
 	
 	<form id="formFisica" action="/TartarugaCometa/cliente?acao=salvarTemp" method="post" hidden>
 		
-		Nome: <input type="text" name="nomeCliente" pattern="^[A-Za-zÀ-ÿ\s]+$" maxlength="50" title="Somente letras" oninput="somenteLetras(this)" required style="width: 25ch"> <br>
+		Nome: <input type="text" name="nomeCliente" pattern="^[A-Za-zÀ-ÿ\s]+$" maxlength="50" title="Somente letras" oninput="somenteLetras(this)" style="width: 25ch" required> <br>
 		CPF: <input type="text" name="cpfCnpj" pattern="[\d\D]{14}" title="O CPF deve conter 11 digitos e somente números" oninput="mascaraCPF(this)" maxlength="14" required > <br>
 		<button type="submit"> Salvar </button>
 		
@@ -30,7 +34,7 @@
 	<form id="formJuridica" action="/TartarugaCometa/cliente?acao=salvarTemp" method="post" hidden>
 		Nome: <input type="text" name="nomeCliente"  maxlength="50" pattern="^[A-Za-zÀ-ÿ\s]+$" title="Somente letras" oninput="somenteLetras(this)" style="width: 25ch" required> <br>
 		CNPJ: <input type="text" name="cpfCnpj" pattern="[\d\D]{18}" maxlength="18" title="O CNPJ deve conter 14 digitos e somente números" oninput="mascaraCNPJ(this)" required > <br>
-		Razão Social: <input type="text" name="razaoSocial" oninput="somenteLetras(this)" required style="width: 30ch"> <br>
+		Razão Social: <input type="text" name="razaoSocial" required style="width: 30ch"> <br>
 		<button type="submit"> Salvar </button>
 	</form> <br>
 	

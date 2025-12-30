@@ -41,15 +41,16 @@
 </style>
 </head>
 <body>
+	<button onclick="history.back()"> Voltar </button> <br>
 
-<h1 style="text-align: center"> Entregas Cadastradas </h1>
+	<h1 style="text-align: center"> Entregas Cadastradas </h1>
 
 <table>
     <thead>
         <tr>
             <th>ID</th>
-            <th>Destinatário</th>
             <th>Remetente</th>
+            <th>Destinatário</th>
             <th>Produtos</th>
             <th>Frete</th>
             <th>Status</th>
@@ -67,6 +68,15 @@
                 <td>${entrega.idEntrega}</td>
 
                 <td>
+                    <c:if test="${not empty entrega.clienteDestinatario.razaoSocial}">
+                        ${entrega.clienteDestinatario.razaoSocial}
+                    </c:if>
+                    <c:if test="${empty entrega.clienteDestinatario.razaoSocial}">
+                        ${entrega.clienteDestinatario.nome}
+                    </c:if>
+                </td>
+
+                <td>
                     <c:if test="${not empty entrega.clienteRemetente.razaoSocial}">
                         ${entrega.clienteRemetente.razaoSocial}
                     </c:if>
@@ -75,14 +85,7 @@
                     </c:if>
                 </td>
 
-                <td>
-                    <c:if test="${not empty entrega.clienteDestinatario.razaoSocial}">
-                        ${entrega.clienteDestinatario.razaoSocial}
-                    </c:if>
-                    <c:if test="${empty entrega.clienteDestinatario.razaoSocial}">
-                        ${entrega.clienteDestinatario.nome}
-                    </c:if>
-                </td>
+
 
                 <td>
                     <c:forEach items="${entrega.produtos}" var="produtoEntrega">
@@ -103,14 +106,13 @@
                             <fmt:formatNumber value="${subtotalProduto}"
                                               type="currency"
                                               currencySymbol="R$" /> <br>
-                           
                         </div>
 
                     </c:forEach>
                 </td>
 
                 <td>
-                	<strong> Calculo do Frete = 10% do Valor da Compra </strong>
+                	<strong> Frete (10% sobre o total) </strong>
                 	
                     <c:forEach items="${entrega.produtos}" var="produtoEntrega">
                         <div>
@@ -127,7 +129,7 @@
                             <span style="color: green;">Entregue</span>
                         </c:when>
                         <c:otherwise>
-                            <span style="color: orange;">Pendente</span>
+                            <span id="pendente" style="color: orange;">Pendente</span>
                         </c:otherwise>
                     </c:choose>
                 </td>
@@ -142,7 +144,7 @@
 
                 <td>
                     <c:if test="${entrega.realizada == false}">
-					    <a onclick="return concluir(${entrega.realizada})" id="concluir" href="/TartarugaCometa/entrega?acao=editarStatus&idEntrega=${entrega.idEntrega}&realizada=true">
+					    <a onclick="concluir(event, ${entrega.realizada})" href="/TartarugaCometa/entrega?acao=editarStatus&idEntrega=${entrega.idEntrega}&realizada=true">
 					        Concluir
 					    </a>
 					    	|
@@ -151,8 +153,6 @@
 	                       Excluir
 	                    </a>
 					</c:if>
-                    
-                    
                 </td>
             </tr>
 
@@ -171,6 +171,7 @@
 		        alert("A entrega não pode ser excluída porque já foi realizada!")
 		        return false;
 	        } 
+	        
 	        var confirmacao = confirm("Tem certeza de que deseja excluir esta entrega?");
 	        
 	        if (confirmacao){
@@ -181,15 +182,28 @@
 	        }
 	    }	
 	    
-	    function concluir(foiRealizada) {
-	    	var confirmacao = confirm("Tem certeza que a entrega foi concluida?")
-	    
-	    	if (confirmacao){
-	    		alert("Entrega concluida com sucesso!");
-	    		return true;
-	    	} else {
-	    		return false;
-	    	}
+	    function concluir(event, foiRealizada) {
+	        event.preventDefault(); 
+	        
+	        const urlDestino = event.currentTarget.href;
+
+	        var confirmacao = confirm("Tem certeza que a entrega foi concluida?");
+	        
+	        if (confirmacao) {
+	            const pendente = document.getElementById('pendente'); 
+	            
+	            pendente.innerText = "Em andamento";
+	            pendente.style.color = "blue";
+	            
+	            setTimeout(() => {
+	                alert("Entrega concluída com sucesso!");
+	                
+	                window.location.href = urlDestino;
+	            }, 3000);
+	            
+	        } else {
+	            alert("Operação cancelada!");
+	        }
 	    }
 	</script>
 

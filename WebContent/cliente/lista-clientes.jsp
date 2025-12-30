@@ -38,6 +38,7 @@
 </style>
 </head>
 <body>
+	<button onclick="history.back()"> Voltar </button> <br>
 
     <h1 style="text-align: center"> Clientes Cadastrados </h1>
 
@@ -78,15 +79,19 @@
                         </c:choose>
                     </td>
                     <td>${cliente.documentoFormatado}</td>
+                    
                     <td>
-                        <span style="background: #eee; padding: 2px 8px; border-radius: 10px;">
+                        <span>
                             #${cliente.endereco_id}
                         </span>
                     </td>
+                    
                     <td>
                         <a href="/TartarugaCometa/cliente?acao=buscarCliente&idCliente=${cliente.idCliente}"> Editar </a> 
                         | 
                         <a onclick="return excluir()" href="/TartarugaCometa/cliente?acao=deletarCliente&idCliente=${cliente.idCliente}"> Excluir </a>
+                        |
+                        <a href="/TartarugaCometa/cliente?acao=gerenciarProduto&idCliente=${cliente.idCliente}"> Gerenciar Estoque </a>
                     </td>
                 </tr>
             </c:forEach>
@@ -94,7 +99,7 @@
     </table>
 
     <br>
-    <div style="margin-top: 10px;">
+    <div style="margin-top: 10px; text-align:center">
         <a href="adm.jsp"> Tela Principal </a> | 
         <a href="cliente?acao=cadastrar"> Novo Cliente </a> | 
         <a href="endereco?acao=listar"> Ver Endereços </a>
@@ -108,6 +113,7 @@
                 alert("Cliente excluído com sucesso!");
                 return true;
             } else {
+            	alert("Operação cancelada!")
                 return false;
             }
         }

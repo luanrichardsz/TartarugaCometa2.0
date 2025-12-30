@@ -7,6 +7,7 @@
 <title>Cadastrar Produto</title>
 </head>
 <body>
+	<button onclick="history.back()"> Voltar </button> <br>
 	
 	<h1 style="text-align: center">Cadastrar Produto</h1>
 	

@@ -9,8 +9,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import dao.ProdutoDAO;
+import model.Cliente;
 import model.Produto;
 
 @WebServlet("/produto")
@@ -23,6 +25,9 @@ public class ProdutoServlet extends HttpServlet {
 		switch (acao) {
 		case "listar":
 			listarProduto(request, response);
+			break;
+		case "sairGerenciamento":
+			sairGerenciamento(request, response);
 			break;
 		case "cadastrar":
 			request.getRequestDispatcher("/produto/form-produto.jsp").forward(request, response);
@@ -56,33 +61,75 @@ public class ProdutoServlet extends HttpServlet {
 		
 		request.setAttribute("produtos", lista);
 		
+		HttpSession session = request.getSession();
+		Cliente cliente = (Cliente) session.getAttribute("clienteLogado");
+
+	    if (cliente != null) {
+
+	        ArrayList<Produto> produtosDoCliente = produtoDAO.listarPorCliente(cliente.getIdCliente());
+
+	        request.setAttribute("produtos", produtosDoCliente);
+	        request.setAttribute("modo", "GERENCIAMENTO");
+
+	    } else {
+	    	
+	        ArrayList<Produto> todosProdutos = produtoDAO.listar();
+
+	        request.setAttribute("produtos", todosProdutos);
+	        request.setAttribute("modo", "SISTEMA");
+	    }
+
 		RequestDispatcher rd = request.getRequestDispatcher("/produto/lista-produtos.jsp");
 		rd.forward(request, response);
 	}
 	
-	protected void cadastrarProduto(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("Cadastrando um produto");
-		
-		Produto produto = new Produto();
-		
-		String pesoComMascara = request.getParameter("peso");
-		String peso = pesoComMascara.replace(" kg", " ");
-		
-		String valorComMascara = request.getParameter("valor");
-		String valor = valorComMascara.replace("R$ ", "").replace(".", "").replace(",", ".");
-		
-		produto.setNome(request.getParameter("nome"));
-		produto.setPeso(Double.parseDouble(peso));
-		produto.setVolume(Integer.parseInt(request.getParameter("volume")));
-		produto.setValor(Double.parseDouble(valor));
-		produto.setDescricao(request.getParameter("descricao"));
-		
-		ProdutoDAO produtoDAO = new ProdutoDAO();
-		
-		produtoDAO.cadastrar(produto);
-		
-		response.sendRedirect("produto?acao=listar");
+	protected void sairGerenciamento(HttpServletRequest request, HttpServletResponse response)
+	        throws ServletException, IOException {
+
+	    HttpSession session = request.getSession();
+	    session.removeAttribute("clienteLogado");
+	    
+	    response.sendRedirect("produto?acao=listar");
 	}
+
+	
+	protected void cadastrarProduto(HttpServletRequest request, HttpServletResponse response)
+	        throws ServletException, IOException {
+
+	    System.out.println("Cadastrando um produto");
+
+	    Produto produto = new Produto();
+
+	    String pesoComMascara = request.getParameter("peso");
+	    String peso = pesoComMascara.replace(" kg", "").trim();
+
+	    String valorComMascara = request.getParameter("valor");
+	    String valor = valorComMascara.replace("R$ ", "")
+	                                  .replace(".", "")
+	                                  .replace(",", ".");
+
+	    produto.setNome(request.getParameter("nome"));
+	    produto.setPeso(Double.parseDouble(peso));
+	    produto.setVolume(Integer.parseInt(request.getParameter("volume")));
+	    produto.setValor(Double.parseDouble(valor));
+	    produto.setDescricao(request.getParameter("descricao"));
+
+	    HttpSession session = request.getSession(false);
+	    Integer idCliente = null;
+
+	    if (session != null) {
+	        Cliente cliente = (Cliente) session.getAttribute("clienteLogado");
+	        if (cliente != null) {
+	            idCliente = cliente.getIdCliente();
+	        }
+	    }
+
+	    ProdutoDAO produtoDAO = new ProdutoDAO();
+	    produtoDAO.cadastrar(produto, idCliente);
+
+	    response.sendRedirect("produto?acao=listar");
+	}
+
 	
 	protected void buscarProduto(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String paramId = request.getParameter("idProduto");
@@ -101,25 +148,26 @@ public class ProdutoServlet extends HttpServlet {
 	}
 	
 	protected void editarProduto(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("Editando Produto");
-		
-		String novoNome = request.getParameter("nomeProduto");
-		String paramPeso = request.getParameter("peso");
-		String paramVolume = request.getParameter("volume");
-		String paramValor = request.getParameter("valor");
-		String novaDescricao = request.getParameter("descricao");
-		String paramId = request.getParameter("idProduto");
-		
-		Double novoPeso = Double.parseDouble(paramPeso);
-		int novoVolume = Integer.parseInt(paramVolume);
-		Double novoValor = Double.parseDouble(paramValor);
-		Integer idProduto = Integer.parseInt(paramId);
-		
-		ProdutoDAO produtoDAO = new ProdutoDAO();
-		
-		produtoDAO.atualizar(novoNome, novoPeso, novoVolume, novoValor, novaDescricao, idProduto);
-		
-		response.sendRedirect("produto?acao=listar");
+
+	    String pesoComMascara = request.getParameter("peso");
+	    String pesoLimpo = pesoComMascara.replaceAll("[^0-9,]", "").replace(",", ".");
+
+	    String valorComMascara = request.getParameter("valor");
+	    String valorLimpo = valorComMascara.replaceAll("[^0-9,]", "").replace(",", ".");
+
+	    String novoNome = request.getParameter("nome");
+	    int novoVolume = Integer.parseInt(request.getParameter("volume"));
+	    String novaDescricao = request.getParameter("descricao");
+	    int idProduto = Integer.parseInt(request.getParameter("idProduto"));
+
+	    double novoPeso = Double.parseDouble(pesoLimpo);
+	    double novoValor = Double.parseDouble(valorLimpo);
+
+	    ProdutoDAO produtoDAO = new ProdutoDAO();
+
+	    produtoDAO.atualizar(novoNome, novoPeso, novoVolume, novoValor, novaDescricao, null, idProduto);
+
+	    response.sendRedirect("produto?acao=listar");
 	}
 	
 	protected void deletarProduto(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
